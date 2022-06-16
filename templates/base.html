@@ -8,11 +8,14 @@
     <title>{% block title %} {% endblock %} </title>
 </head>
 <body>
-    <a href="{% url 'shop_app:home' %}">Home</a>
-    <a href="{% url 'shop_app:about' %}">About</a>
-    <a href="{% url 'shop_app:contact' %}">Contact</a>
-    <a href="{% url 'shop_app:all_products' %}">All products</a>
-    
+    <div class="container">
+        <a href="{% url 'shop_app:home' %}">Home</a> |
+        <a href="{% url 'shop_app:about' %}">About</a> |
+        <a href="{% url 'shop_app:contact' %}">Contact</a> |
+        <a href="{% url 'shop_app:all_products' %}">All products</a> |
+        <a href="{% url 'shop_app:my_cart' %}">My cart</a> |
+    </div>
+
     {% block content %}
     {% endblock %}
 </body>

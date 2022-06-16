@@ -13,7 +13,7 @@
             <h3><a href="{% url 'shop_app:product_detail' p.slug %}">{{p.title}}</a></h3>
             <image src="{{p.image.url}}" alt="" width="200px">
             <p class="mt-3">Price: <strike>Rs. {{p.marked_price}} </strike> Rs. {{p.selling_price}}</p>
-            <a href="" class="btn btn-primary">Add to cart</a>
+            <a href="{% url 'shop_app:add_to_cart' p.id %}" class="btn btn-primary">Add to cart</a>
         </div>
         {% endfor %}
     </div>
