@@ -1,14 +1,16 @@
 {% extends 'base.html' %}
 
-{% block title %} Home {% endblock %}
+{% block title %} All products {% endblock %}
 
 {% block content %}
 <div class="container">
     <hr>
-    <h1 class="text-center">Welcome to our shop website.</h1>
+    <h1 class="text-center">All products</h1>
     <hr>
-    <div class="row mt-3">
-        {% for p in product_list %}
+    {% for cat in categories %}
+    <h4>{{cat.title}}</h4>
+    <div class="row">
+        {% for p in cat.product_set.all %}
         <div class="col-md-4">
             <h3><a href="{% url 'shop_app:product_detail' p.slug %}">{{p.title}}</a></h3>
             <image src="{{p.image.url}}" alt="" width="200px">
@@ -17,5 +19,10 @@
         </div>
         {% endfor %}
     </div>
+
+    {% endfor %}
+
+    
+
 </div>
 {% endblock %}  
