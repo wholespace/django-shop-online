@@ -5,9 +5,11 @@ from os import access
 import re
 from cv2 import cartToPolar
 from django.shortcuts import render, redirect
-from django.views.generic import View, TemplateView
+from django.urls import reverse_lazy
+from django.views.generic import View, TemplateView, CreateView
 from numpy import product
 from .models import *
+from .forms import CheckoutForm
 
 # Create your views here.
 class HomeView(TemplateView):
@@ -140,6 +142,44 @@ class EmptyCartView(View):
             cart.total = 0
             cart.save()
         return redirect("shop_app:my_cart")
+
+class CheckoutView(CreateView):
+    template_name = 'checkout.html'
+    form_class = CheckoutForm
+    success_url = reverse_lazy("shop_app:home")
+
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        cart_id = self.request.session.get("cart_id", None)
+        if cart_id:
+            cart_obj = Cart.objects.get(id=cart_id)
+        else:
+            cart_obj = None
+        context['cart'] = cart_obj
+        return context
+    
+    def form_valid(self, form):
+        cart_id = self.request.session.get("cart_id")
+        if cart_id:
+            cart_obj = Cart.objects.get(id=cart_id)
+            form.instance.cart = cart_obj
+            form.instance.subtotal = cart_obj.total
+            form.instance.discount = 0
+            form.instance.total = cart_obj.total
+            form.instance.order_status = "Order Received"
+            del self.request.session['cart_id']
+        else:
+            return redirect("shop_app:home")
+        return super().form_valid(form)
+
+
+
+
+
+
+
+
 
 class AboutView(TemplateView):
     template_name = 'about.html'
