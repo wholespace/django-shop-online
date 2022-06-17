@@ -42,13 +42,14 @@ class Product(models.Model):
         return self.title
 
 class Cart(models.Model):
-    Customer = models.ForeignKey(
+    customer = models.ForeignKey(
         Customer, on_delete=models.SET_NULL, null=True, blank=True)
     total = models.PositiveIntegerField(default=0)
     created_at = models.DateTimeField(auto_now_add=True)
-    
+
     def __str__(self):
         return "Cart: " + str(self.id)
+
 
 
 class CartProduct(models.Model):
