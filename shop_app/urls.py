@@ -12,4 +12,16 @@ urlpatterns = [
 
     path("add-to-cart-<int:pro_id>/", AddToCartView.as_view(), name="add_to_cart"),
     path("my-cart/", MyCartView.as_view(), name="my_cart"),
+    path('manage-cart/<int:cp_id>/', ManageCartView.as_view(), name="manage_cart"),
+    path('empty-cart/', EmptyCartView.as_view(), name="empty_cart"),
+
+    path('checkout/', CheckoutView.as_view(), name="checkout"),
+    path('register/', CustomerRegistrationView.as_view(), name="customer_registration"),
+    path('logout/', CustomerLogoutView.as_view(), name="customer_logout"),
+    path('login/', CustomerLoginView.as_view(), name="customer_login"),
+
+    path("profile/", CustomerProfileView.as_view(), name="customer_profile"),
+    path("profile/order-<int:pk>/", CustomerOrderDetailView.as_view(),
+         name="customer_order_detail"),
+
 ]
