@@ -27,9 +27,9 @@
                         <td>{{cp.quantity}}</td>
                         <td>{{cp.subtotal}}</td>
                         <td>
-                            <a href="" class="btn btn-primary"> + </a>
-                            <a href="" class="btn btn-warning"> - </a>
-                            <a href="" class="btn btn-danger"> x </a>
+                            <a href="{% url 'shop_app:manage_cart' cp.id %}?action=inc" class="btn btn-primary"> + </a>
+                            <a href="{% url 'shop_app:manage_cart' cp.id %}?action=dcr" class="btn btn-warning"> - </a>
+                            <a href="{% url 'shop_app:manage_cart' cp.id %}?action=rmv" class="btn btn-danger"> x </a>
                         </td>
                     </tr>
                     {% endfor %}

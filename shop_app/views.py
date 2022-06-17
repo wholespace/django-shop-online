@@ -1,8 +1,11 @@
+from argparse import Action
 from multiprocessing import context
 from operator import sub
+from os import access
+import re
 from cv2 import cartToPolar
-from django.shortcuts import render
-from django.views.generic import TemplateView
+from django.shortcuts import render, redirect
+from django.views.generic import View, TemplateView
 from numpy import product
 from .models import *
 
@@ -96,6 +99,38 @@ class MyCartView(TemplateView):
             cart = None
         context['cart'] = cart
         return context
+
+class ManageCartView(View):
+    def get(self, request, *args, **kwargs):
+        cp_id = self.kwargs["cp_id"]
+        action =  request.GET.get("action")
+        cp_object = CartProduct.objects.get(id=cp_id)
+        cart_obj =  cp_object.cart
+
+        if action == "inc":
+            cp_object.quantity += 1
+            cp_object.subtotal += cp_object.rate
+            cp_object.save()
+            cart_obj.total += cp_object.rate
+            cart_obj.save()
+
+        elif action == "dcr":
+            cp_object.quantity -= 1
+            cp_object.subtotal -= cp_object.rate
+            cp_object.save()
+            cart_obj.total -= cp_object.rate
+            cart_obj.save()
+            if cp_object.quantity == 0:
+                cp_object.delete()
+        elif action == "rmv":
+            cart_obj.total -= cp_object.subtotal
+            cart_obj.save()
+            cp_object.delete()
+        else:
+            pass
+
+        return redirect("shop_app:my_cart")
+
 
 
 class AboutView(TemplateView):
