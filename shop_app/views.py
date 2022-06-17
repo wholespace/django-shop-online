@@ -1,4 +1,5 @@
 from argparse import Action
+import email
 from multiprocessing import context
 from operator import sub
 from os import access
@@ -6,10 +7,11 @@ import re
 from cv2 import cartToPolar
 from django.shortcuts import render, redirect
 from django.urls import reverse_lazy
-from django.views.generic import View, TemplateView, CreateView
+from django.views.generic import View, TemplateView, CreateView, FormView
 from numpy import product
 from .models import *
-from .forms import CheckoutForm
+from django.contrib.auth import authenticate, login, logout
+from .forms import CheckoutForm, CustomerRegistrationForm, CustomerLoginForm
 
 # Create your views here.
 class HomeView(TemplateView):
@@ -174,11 +176,49 @@ class CheckoutView(CreateView):
         return super().form_valid(form)
 
 
+class CustomerRegistrationView(CreateView):
+    template_name = "customer_registration.html"
+    form_class = CustomerRegistrationForm
+    success_url = reverse_lazy("shop_app:home")
 
+    def form_valid(self, form):
+        username = form.cleaned_data.get("username")
+        password = form.cleaned_data.get("password")
+        email = form.cleaned_data.get("email")
+        user = User.objects.create_user(username, email, password)
+        form.instance.user = user
+        login(self.request, user)
 
+        return super().form_valid(form)
 
+class CustomerLogoutView(View):
+    def get(self, request):
+        logout(request)
+        return redirect("shop_app:home")
 
+class CustomerLoginView(FormView):
+    template_name = "customer_login.html"
+    form_class = CustomerLoginForm
+    success_url = reverse_lazy("shop_app:home")
 
+    # # form_valid method is a type of post method and is available in createview formview and updateview
+    def form_valid(self, form):
+        uname = form.cleaned_data.get("username")
+        pword = form.cleaned_data["password"]
+        usr = authenticate(username=uname, password=pword)
+        if usr is not None and Customer.objects.filter(user=usr).exists():
+            login(self.request, usr)
+        else:
+            return render(self.request, self.template_name, {"form": self.form_class, "error": "Invalid credentials"})
+
+        return super().form_valid(form)
+
+    # def get_success_url(self):
+    #     if "next" in self.request.GET:
+    #         next_url = self.request.GET.get("next")
+    #         return next_url
+    #     else:
+    #         return self.success_url
 
 
 class AboutView(TemplateView):

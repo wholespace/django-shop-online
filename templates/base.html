@@ -14,6 +14,14 @@
         <a href="{% url 'shop_app:contact' %}">Contact</a> |
         <a href="{% url 'shop_app:all_products' %}">All products</a> |
         <a href="{% url 'shop_app:my_cart' %}">My cart</a> |
+
+        {% if  request.user.customer %}
+        Welcome {{ request.user.username}}
+        <a href="{% url 'shop_app:customer_logout' %}">Logout</a> |
+        {% else %}
+            <a href="{% url 'shop_app:customer_registration' %}">Register</a> |
+            <a href="{% url 'shop_app:customer_login' %}">Login</a> |
+        {% endif %}
     </div>
 
     {% block content %}
