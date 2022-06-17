@@ -131,7 +131,15 @@ class ManageCartView(View):
 
         return redirect("shop_app:my_cart")
 
-
+class EmptyCartView(View):
+    def get(self, request, *args, **kwargs):
+        cart_id = self.request.session.get('cart_id', None)
+        if cart_id:
+            cart = Cart.objects.get(id=cart_id)
+            cart.cartproduct_set.all().delete()
+            cart.total = 0
+            cart.save()
+        return redirect("shop_app:my_cart")
 
 class AboutView(TemplateView):
     template_name = 'about.html'
